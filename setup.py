@@ -48,12 +48,11 @@ def autosetup():
             ],
         },
         
-        install_requires = ['%s>=%s' % x for x in dict(
-            twisted             = "10.1.0",
-            simplejson          = "2.1.1",
-            cyclone             = "0.4",
-        ).items()],
-
+        install_requires = [
+            'twisted',
+            'simplejson',
+            'cyclone',
+        ],
         # metadata for upload to PyPI
         author          = "Gleicon Moraes",
         author_email    = "gleicon@gmail.com",
