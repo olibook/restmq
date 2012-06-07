@@ -1,17 +1,17 @@
-import ez_setup
-ez_setup.use_setuptools()
+# import ez_setup
+# ez_setup.use_setuptools()
 
 import sys, os, os.path, subprocess
+# print sys.argv
+# try:
+#     from twisted import plugin
+# except ImportError, e:
+#     print >>sys.stderr, "setup.py requires Twisted to create a proper RestMQ installation."
+#     print >>sys.stderr, "Please install it before continuing."
+#     sys.exit(1)
 
-try:
-    from twisted import plugin
-except ImportError, e:
-    print >>sys.stderr, "setup.py requires Twisted to create a proper RestMQ installation."
-    print >>sys.stderr, "Please install it before continuing."
-    sys.exit(1)
-
-from setuptools.command import easy_install
-import pkg_resources as pkgrsrc
+# from setuptools.command import easy_install
+# import pkg_resources as pkgrsrc
 
 from distutils import log
 log.set_threshold(log.INFO)
@@ -49,6 +49,7 @@ def autosetup():
         },
         
         install_requires = [
+            'zope.interface',
             'twisted',
             'simplejson',
             'cyclone',
@@ -63,17 +64,26 @@ def autosetup():
 
 
 if(__name__ == '__main__'):
-    if(sys.argv[-1] in pregenerate_cache_commands):
+    skip_cache_regeneration = 'egg_info' in sys.argv
+    if not skip_cache_regeneration:
+        try:
+            from twisted import plugin
+        except ImportError, e:
+            print >>sys.stderr, "setup.py requires Twisted to create a proper RestMQ installation."
+            print >>sys.stderr, "Please install it before continuing."
+            sys.exit(1)
+    if(not skip_cache_regeneration and sys.argv[-1] in pregenerate_cache_commands):
+       
         dist_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src')
         if(dist_dir not in sys.path):
             sys.path.insert(0, dist_dir)
 
         from restmq import setup_extras
-        print 'Regenerating plugin cache...'
+        print 'Regenerating plugin cache ...'
         setup_extras.regeneratePluginCache()
 
     dist = autosetup()
-    if(sys.argv[-1] in postgenerate_cache_commands):
+    if(not skip_cache_regeneration and sys.argv[-1] in postgenerate_cache_commands):
         subprocess.Popen(
             [sys.executable, '-c', 'from restmq import setup_extras; setup_extras.regeneratePluginCache(); print "Regenerating plugin cache..."'],
         ).wait()
