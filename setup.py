@@ -7,16 +7,6 @@ setup(
    package_dir		= {
       ''			: 'src',
    },
-   include_package_data = True,
-
-   zip_safe = False,
-
-   entry_points    = {
-      'setuptools.file_finders'   : [
-         'git = restmq.setup_extras:find_files_for_git',
-         ],
-      },
-        
    install_requires = [
       'twisted',
       'simplejson',
